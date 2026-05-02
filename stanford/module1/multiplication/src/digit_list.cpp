@@ -66,3 +66,68 @@ digit_list operator+(const digit_list& l1, const digit_list& l2) {
 
   return result;
 }
+
+bool less_than(digit_list left, digit_list right) {
+  trim_leading_zeroes(left);
+  trim_leading_zeroes(right);
+
+  if (left.size() != right.size()) {
+    return left.size() < right.size();
+  }
+
+  auto l = left.begin();
+  auto r = right.begin();
+
+  while (l != left.end()) {
+    if (*l != *r) {
+      return *l < *r;
+    }
+
+    ++l;
+    ++r;
+  }
+
+  return false;
+}
+
+void trim_leading_zeroes(digit_list& n) {
+  while (n.size() > 1 && n.front() == 0) {
+    n.pop_front();
+  }
+}
+
+digit_list operator-(const digit_list& left, const digit_list& right) {
+  if (less_than(left, right)) {
+    throw std::invalid_argument("right is bigger than left");
+  }
+
+  auto l = left.rbegin();
+  auto r = right.rbegin();
+
+  digit_list result;
+
+  int borrow = 0;
+  while (l != left.rend()) {
+    int left_digit = static_cast<int>(*l);
+    int right_digit = 0;
+
+    if (r != right.rend()) {
+      right_digit = static_cast<int>(*r);
+      ++r;
+    }
+
+    int diff = left_digit - (right_digit + borrow);
+    if (diff < 0) {
+      borrow = 1;
+      diff += 10;
+    } else {
+      borrow = 0;
+    }
+    result.push_front(static_cast<size_t>(diff));
+
+    l++;
+  }
+
+  trim_leading_zeroes(result);
+  return result;
+}

@@ -10,12 +10,6 @@
 
 #include "multiplication.hpp"
 
-void trim_leading_zeroes(digit_list& n) {
-  while (n.size() > 1 && n.front() == 0) {
-    n.pop_front();
-  }
-}
-
 digit_list recursive_product_impl(const digit_list& num1,
                                   const digit_list& num2);
 
