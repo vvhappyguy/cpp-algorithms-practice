@@ -5,7 +5,7 @@
 
 #include "multiplication.hpp"
 
-namespace{
+namespace {
 
 bool is_zero(const digit_list& n) {
   for (size_t d : n) {
@@ -27,6 +27,12 @@ digit_list karatsuba_product_impl(const digit_list& num1,
 
   if (is_zero(num1) || is_zero(num2)) {
     return {0};
+  }
+
+  constexpr size_t karatsuba_cutoff = 32;
+
+  if (std::max(num1.size(), num2.size()) <= karatsuba_cutoff) {
+    return grade_school_product(num1, num2);
   }
 
   // Simple production one digit
@@ -98,7 +104,7 @@ digit_list karatsuba_product_impl(const digit_list& num1,
   trim_leading_zeroes(result);
   return result;
 }
-}
+}  // namespace
 
 // Karatsuba multiplication
 digit_list karatsuba_product(const digit_list& num1, const digit_list& num2) {
