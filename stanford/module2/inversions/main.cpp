@@ -1,24 +1,21 @@
-#include <vector>
 #include <iostream>
+#include <vector>
 
-using namespace std;
-
-vector<int> numbers = {1, 3, 6, 2, 4, 6};
-
-int merge_and_count(std::vector<int>& arr, int left, int mid, int right) {
+long long merge_and_count(std::vector<int>& arr, int left, int mid, int right) {
   std::vector<int> temp;
+  temp.reserve(right - left + 1);
 
   int i = left;
   int j = mid + 1;
 
-  int inversions = 0;
+  long long inversions = 0;
 
   while (i <= mid && j <= right) {
     if (arr[i] <= arr[j]) {
       temp.push_back(arr[i]);
       ++i;
     } else {
-      inversions += (mid - i + 1);
+      inversions += static_cast<long long>(mid - i + 1);
       temp.push_back(arr[j]);
       ++j;
     }
@@ -34,26 +31,25 @@ int merge_and_count(std::vector<int>& arr, int left, int mid, int right) {
     ++j;
   }
 
-  for (int k = 0; k < temp.size(); ++k) {
-    arr[left + k] = temp[k];
+  for (size_t k = 0; k < temp.size(); ++k) {
+    arr[left + static_cast<int>(k)] = temp[k];
   }
+
   return inversions;
 }
 
-int sort_and_count(std::vector<int>& arr, int left, int right) {
+long long sort_and_count(std::vector<int>& arr, int left, int right) {
   if (left >= right) {
     return 0;
   }
 
   int mid = left + (right - left) / 2;
 
-  int x = sort_and_count(arr, left, mid);
-  int y = sort_and_count(arr, mid + 1, right);
-  int z = merge_and_count(arr, left, mid, right);
+  long long left_inversions = sort_and_count(arr, left, mid);
+  long long right_inversions = sort_and_count(arr, mid + 1, right);
+  long long split_inversions = merge_and_count(arr, left, mid, right);
 
-  std::cout << x << ' ' << y << ' ' << z << std::endl;
-
-  return x + y + z;
+  return left_inversions + right_inversions + split_inversions;
 }
 
 long long count_inversions(std::vector<int>& arr) {
@@ -65,17 +61,15 @@ long long count_inversions(std::vector<int>& arr) {
 }
 
 int main() {
-  std::vector<int> arr = {5, 2, 4, 7, 1, 3, 2, 6};
-  arr = {1, 2, 3, 4, 5, 6, 7, 8};
-  arr = {2, 1, 3, 4, 5, 6, 7, 8};
-  arr = {1, 3, 5, 2, 4, 6};
+  std::vector<int> input;
+  int x;
 
-  int res = count_inversions(arr);
-  std::cout << "inversions=" << res << std::endl;
-
-  for (int x : arr) {
-    std::cout << x << " ";
+  while (std::cin >> x) {
+    input.push_back(x);
   }
 
-  std::cout << '\n';
+  long long result = count_inversions(input);
+  std::cout << result << '\n';
+
+  return 0;
 }
