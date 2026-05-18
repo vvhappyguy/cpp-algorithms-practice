@@ -85,6 +85,39 @@ std::vector<int> dfs(Graph& graph, int root, int goal) {
   return path;
 }
 
+void dfs_ts(Graph& graph, int root, int& current_label, std::vector<int>& s,
+            std::vector<bool>& visited) {
+  visited[root] = true;
+
+  for (auto it = graph[root].rbegin(); it != graph[root].rend(); ++it) {
+    int e = *it;
+    if (!visited[e]) {
+      dfs_ts(graph, e, current_label, s, visited);
+    }
+  }
+  s[root] = current_label;
+  current_label--;
+}
+
+std::vector<int> topological_sort(Graph& graph) {
+  std::vector<bool> visited(graph.size(), false);
+  std::vector<int> s(graph.size());
+  int current_label = graph.size() - 1;
+  for (int i = 0; i < graph.size(); i++) {
+    if (!visited[i]) {
+      dfs_ts(graph, i, current_label, s, visited);
+    }
+  }
+
+  std::vector<int> order(s.size());
+
+  for (int v = 0; v < static_cast<int>(s.size()); ++v) {
+    order[s[v]] = v;
+  }
+
+  return order;
+}
+
 template <typename T>
 void print(const T& t) {
   if (t.size() == 0) {
@@ -122,11 +155,15 @@ int main() {
 
     auto bfs_result = bfs(graph, 0, 5);
     auto dfs_result = dfs(graph, 0, 5);
+    auto ts_result = topological_sort(graph);
 
     std::cout << "BFS path: " << std::endl << '\t';
     print(bfs_result);
     std::cout << "DFS path: " << std::endl << '\t';
     print(dfs_result);
+
+    std::cout << "Topological sort: " << std::endl << '\t';
+    print(ts_result);
   }
   return 0;
 }
